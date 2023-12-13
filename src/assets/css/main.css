@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body>#root>div {
+    height: 100vh;
+}
+
+p {
+    color: #4f4f4f;
+    line-height: 1;
+}
+
+.bg-default {
+
+    background: #d9ddff54 !important;
+}
+
+.card--bg {
+    background-image: url('../images/pattern.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgb(243 244 255 / 71%);
+}
+
+.logo {
+    width: 100px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.login-left--bg {
+    background-image: url('../images/1_1.png'), url('../images/pattern-left.png');
+    background-position: 83px 12px, -279px -19px;
+    background-repeat: no-repeat;
+    background-color: #d9ddff54;
+    padding: 4rem;
+    background-size: 100%, 1049px;
+}
+
+.login-right--bg {
+    padding: 4rem;
+    overflow-x: hidden;
+}
+
+.demo-logo-vertical {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.demo-logo-vertical .logo-text {
+    font-weight: 700;
+}
+
+.study {
+    width: 300px;
+    margin: auto;
+}
+
+.form {
+    width: 300px;
+}
