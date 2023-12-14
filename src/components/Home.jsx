@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -31,6 +31,9 @@ import {useSWRWithAuth} from "../lib/auth";
 import {useNavigate} from "react-router-dom";
 import useSWR from "swr";
 import QuizList from "./QuizList";
+import AddUserForm from "./AddUserForm";
+import toast, {Toaster} from "react-hot-toast";
+import UserList from "./UserList";
 
 const {Search} = Input;
 
@@ -49,6 +52,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [completionResult, setCompletionResult] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddUserModelOpen, setIsAddUserModelOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [token, setToken] = useState(Cookies.get("token") || "");
   const navigate = useNavigate();
@@ -67,7 +71,11 @@ const App = () => {
       .then((res) => res.data.user);
   const {data: user, error, isLoading} = useSWR(apiUrl, fetcher);
 
-  if (error) return navigate("/");
+  useEffect(() => {
+    if (error) return navigate("/");
+  }, [error]);
+
+  if (error) return <></>;
   if (isLoading) return "Loading...";
 
   if (isLoading) {
@@ -153,6 +161,17 @@ const App = () => {
     setErrorMessage("");
     setCompletionResult("");
   };
+
+  const showAddUserModel = () => {
+    setIsAddUserModelOpen(true);
+    setLoading(false);
+  };
+
+  const handleCancelAddUserForm = () => {
+    setIsAddUserModelOpen(false);
+    setLoading(false);
+  };
+
   const columns = [
     {
       title: "Name",
@@ -196,29 +215,10 @@ const App = () => {
       ),
     },
   ];
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      tags: ["IT", "Accounting"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      tags: ["Arts"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      tags: ["IT", "Arts"],
-    },
-  ];
 
   return (
     <Layout>
+      <Toaster position="top-right" reverseOrder={false} />
       <Sider theme="light" trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical">
           <img src={logo} width="100px" />
@@ -286,8 +286,11 @@ const App = () => {
 
                 {/* Modal */}
 
-                <Button type="primary" onClick={showModal}>
+                <Button type="primary" onClick={showModal} className="mr-2">
                   Generate Quiz
+                </Button>
+                <Button htmlType="button" onClick={showAddUserModel}>
+                  Add User
                 </Button>
                 <form>
                   <Modal
@@ -320,6 +323,16 @@ const App = () => {
                     </Button>
                   </Modal>
                 </form>
+                <Modal
+                  open={isAddUserModelOpen}
+                  onCancel={handleCancelAddUserForm}
+                  title="Add User"
+                  footer={[]}
+                >
+                  <AddUserForm
+                    handleCancelAddUserForm={handleCancelAddUserForm}
+                  />
+                </Modal>
               </Card>
               <Card
                 style={{
@@ -327,8 +340,8 @@ const App = () => {
                 }}
                 className="mb-28"
               >
-                <h2>Student List</h2>
-                <Table columns={columns} dataSource={data} />
+                <h2>User List</h2>
+                <UserList />
               </Card>
             </Col>
             <Col span={12} className="gutter-row">
@@ -339,7 +352,7 @@ const App = () => {
                 className="mb-28"
               >
                 <h2>Quiz List</h2>
-                <QuizList columns={columns} dataSource={data} />
+                <QuizList />
               </Card>
             </Col>
           </Row>

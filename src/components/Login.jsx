@@ -41,11 +41,11 @@ const Login = () => {
       if (response.status === 200) {
         Cookies.set("token", response.data.token, {
           sameSite: "None",
-          secure: process.env.NODE_ENV == "production",
+          secure: process.env.REACT_APP_NODE_ENV == "production",
           path: "/",
           domain:
-            process.env.NODE_ENV == "production"
-              ? `.${process.env.NEXT_PUBLIC_CLIENT_URL}`
+            process.env.REACT_APP_NODE_ENV == "production"
+              ? `.${process.env.REACT_APP_CLIENT_URL}`
               : null,
           expires: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours
         });

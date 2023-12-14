@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import {Table, Space, Button, Modal} from "antd";
 import axios from "axios";
 import useSWR from "swr";
-import {useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -12,7 +11,7 @@ const QuizList = () => {
   const token = Cookies.get("token") || "";
   const [allQuizzes, setAllQuizzes] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
-  let navigate = useNavigate();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -37,10 +36,21 @@ const QuizList = () => {
       })
       .then((res) => res.data.result);
 
-  const {data: quizzes, error, isLoading} = useSWR(apiUrl, fetcher);
+  const {
+    data: quizzes,
+    error,
+    isLoading,
+  } = useSWR(apiUrl, fetcher, {refreshInterval: 3000});
+
+  const modifiedData = quizzes?.map((item) => {
+    return {
+      ...item,
+      key: item.id, // Map 'id' to 'key'
+    };
+  });
 
   useEffect(() => {
-    setAllQuizzes(quizzes);
+    setAllQuizzes(modifiedData);
   }, [quizzes]);
 
   const showViewModal = (record) => {
@@ -73,7 +83,7 @@ const QuizList = () => {
     },
   ];
 
-  if (error) return navigate("/");
+  if (error) return error;
   if (isLoading) return "Loading...";
 
   return (
@@ -95,7 +105,7 @@ const QuizList = () => {
           </>
         )}
       </Modal>
-      <Table columns={columns} dataSource={allQuizzes} />
+      <Table columns={columns} dataSource={modifiedData} />
     </>
   );
 };
